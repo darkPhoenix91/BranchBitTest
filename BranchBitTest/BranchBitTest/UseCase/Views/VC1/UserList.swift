@@ -15,6 +15,8 @@ class UserList: UIViewController {
         let tableView = UITableView()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.allowsMultipleSelection = true
+        tableView.allowsMultipleSelectionDuringEditing = true
         tableView.rowHeight = 80.0
         tableView.register(CustomCell.self, forCellReuseIdentifier: "\(CustomCell.self)")
         tableView.register(HeaderSectionCell.self, forHeaderFooterViewReuseIdentifier: "\(HeaderSectionCell.self)")
@@ -81,6 +83,22 @@ class UserList: UIViewController {
     }
 }
 
+class CheckableTableViewCell: UITableViewCell {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        self.accessoryType = selected ? .checkmark : .checkmark
+    }
+}
+
 extension UserList: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -110,7 +128,10 @@ extension UserList: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
         let user = UserModel.getList()[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "\(CustomCell.self)",
+            for: indexPath) as? CheckableTableViewCell
         print(user)
+        print(cell)
         NotificationCenter.default.post(name: Notification.Name("optionSelected"), object: OptionSelected)
     }
 }
