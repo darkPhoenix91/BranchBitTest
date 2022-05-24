@@ -22,6 +22,18 @@ class UserList: UIViewController {
         return tableView
     }()
     
+    private var continueBtn: UIButton = {
+        let nextBtn = UIButton(type: .custom)
+        nextBtn.contentMode = .scaleAspectFit
+        nextBtn.backgroundColor = .blue
+        nextBtn.setTitle("Continuar", for: .normal)
+        nextBtn.translatesAutoresizingMaskIntoConstraints = false
+        nextBtn.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        nextBtn.layer.cornerRadius = 5
+        nextBtn.layer.masksToBounds = true
+        return nextBtn
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -42,6 +54,7 @@ class UserList: UIViewController {
     
     private func configureView() {
         view.addSubview(tableView)
+        view.addSubview(continueBtn)
         var topPadding: CGFloat = 0.0
         if let topInset = UIApplication.shared.windows.first?.safeAreaInsets.top {
             topPadding = topInset
@@ -51,8 +64,20 @@ class UserList: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: topPadding),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: continueBtn.bottomAnchor),
+            
+            continueBtn.heightAnchor.constraint(equalToConstant: 50),
+            continueBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
+            continueBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
+            continueBtn.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -35)
         ])
+    }
+    
+    @objc func buttonAction(sender: UIButton!) {
+        let secondViewController:ResultSelectionViewController = ResultSelectionViewController()
+        secondViewController.modalPresentationStyle = .fullScreen
+        self.present(secondViewController, animated: true, completion: nil)
+        print("Button tapped")
     }
 }
 
@@ -90,11 +115,5 @@ extension UserList: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-extension UserList: HeaderSectionCellDelegate{
-    func didTapButton() {
-        let newViewController = ResultSelectionViewController()
-        self.navigationController?.pushViewController(newViewController, animated: true)
-    }
-}
 
 
